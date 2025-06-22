@@ -1,7 +1,16 @@
-
+import { headers } from 'next/headers';
+import { auth } from '@/lib/auth';
 import { ButtonSignOut } from "./_components/button-signout";
+import { redirect } from 'next/navigation';
 
 export default async function Dashboard() {
+
+  const session = await auth.api.getSession({
+    headers: await headers() //proteção de rota privada
+  })
+  if (!session) {
+    redirect('/')
+  }
 
   return (
     <div className="container mx-auto min-h-screen flex items-center justify-center flex-col">

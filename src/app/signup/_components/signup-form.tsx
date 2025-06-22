@@ -10,6 +10,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import {authClient} from "@/lib/auth-client"
 
 const signupSchema = z
   .object({
@@ -42,7 +43,24 @@ export function SignupForm() {
   })
 
   async function onSubmit(formData: SignupFormValues) {
+    const {data, error} = await authClient.signUp.email({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      callbackURL: "/dashboard",
+    }, {
+      onRequest: (ctx) => {
 
+      },
+      onSuccess: (ctx) => {
+        console.log("Usuário cadastrado com sucesso:", ctx)
+        router.push("/dashboard") //cadastra e redireciona para o dashboard
+      },
+      onError: (ctx) => {
+        console.error("Erro ao cadastrar:", ctx.error)
+        console.log(ctx)
+      }
+    })
 
   }
 

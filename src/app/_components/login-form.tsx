@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { TwitchLogo } from "@phosphor-icons/react";
+import { authClient } from "@/lib/auth-client"
 
 
 const loginSchema = z.object({
@@ -34,7 +35,21 @@ export function LoginForm() {
   })
 
   async function onSubmit(formData: LoginFormValues) {
-
+    await authClient.signIn.email({
+      email: formData.email,
+      password: formData.password,
+      callbackURL: "/dashboard",
+    }, {
+      onRequest: (ctx) => {},
+      onSuccess: (ctx) => {
+        console.log("Usuário logado com sucesso:", ctx)
+        router.replace("/dashboard") // redireciona para o dashboard após login
+      },
+      onError: (ctx) => {
+        console.log("email ou senha incorretos", ctx)
+        console.log(ctx.error.message)     
+      }
+    })
 
   }
 
